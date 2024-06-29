@@ -29,11 +29,24 @@ subItemMap(std::ostream &o, const std::string &prefix,
     }
 }
 void
-subItemMap(std::ostream &o, Indent &prefix,
-           const StrMap &m)
+subItemMap(std::ostream &o, const Indent &prefix,
+           const StrMap &m, bool isVector=false)
 {
     for (const auto &it : m) {
-        o << prefix << it.first << ": " << it.second << "\n";
+        if (isVector)
+            o << prefix.elem();
+        else
+            o << prefix;
+        o << it.first << ": " << it.second << "\n";
+        isVector = false;
+    }
+}
+
+void
+subVectorMap(std::ostream &o, const Indent &prefix, const std::vector<StrMap> &m)
+{
+    for (const auto &it : m) {
+        subItemMap(o, prefix, it, true);
     }
 }
 
@@ -55,32 +68,35 @@ int main()
         << spaces(2) << "- k1: v1\n"
         << spaces(4) << "k2: v2\n";
 
-    Indent i0;
+    Indent i0, i1=i0.indent(), i2=i1.indent();
     o << "**** using Indent()\n";
+    o << i0 << "level0.1:\n"
+        << i1 << "level1.1:\n";
+    subItemMap(o, i2, {{"a", "1"}, {"b", "2"}});
+    o << i1 << "level1.2:\n";
+    subItemMap(o, i2, {{"a", "4"}, {"b", "5"}});
+    o << i0 << "level0.2:\n";
+    o << i1.elem() << "k1: v1\n"
+        << i1 << "k2: v2\n"
+        << i1.elem() << "k1: v1\n"
+        << i1 << "k2: v2\n";
+
+    o << "**** using Indent() and scopes\n";
     o << i0 << "level0.1:\n";
     {
         auto i1=i0.indent();
         o << i1 << "level1.1:\n";
-        {
-            auto i2=i1.indent();
-            StrMap m{{"a", "1"}, {"b", "2"}};
-            subItemMap(o, i2, m);
-        }
+        subItemMap(o, i1.indent(), {{"a", "1"}, {"b", "2"}});
         o << i1 << "level1.2:\n";
-        {
-            auto i2=i1.indent();
-            StrMap m{{"a", "4"}, {"b", "5"}};
-            subItemMap(o, i2, m);
-        }
+        subItemMap(o, i1.indent(), {{"a", "4"}, {"b", "5"}});
     }
     o << i0 << "level0.2:\n";
     {
-        auto i1=i0.indent();
-        o << i1.elem() << "k1: v1\n"
-            << i1 << "k2: v2\n"
-            << i1.elem() << "k1: v1\n"
-            << i1 << "k2: v2\n";
-
+        auto i1 = i0.indent();
+        subVectorMap(o, i1.indent(), {
+            {{"k1", "v1"}, {"k2", "v2"}},
+            {{"k1", "v1"}, {"k2", "v2"}}
+        });
     }
 
     return 0;

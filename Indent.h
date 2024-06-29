@@ -21,14 +21,12 @@ class Indent {
             return rv;
         }
 
-        void print(std::ostream &os) {
-            os << spaces << (isVector ? VectorSuffix : Suffix);
-            isVector = false;
+        void print(std::ostream &os) const {
+            os << spaces << Suffix;
         }
 
-        auto& elem() {
-            isVector = true;
-            return *this;
+        std::string elem() const {
+            return spaces + VectorSuffix;
         }
 
     private:
@@ -38,18 +36,18 @@ class Indent {
 
         // does not include the last two spaces, due to arrays
         std::string spaces;
-        static const std::string Suffix,  // rely that STEP==2
+        static const std::string Suffix,
             VectorSuffix;
-        bool isVector = false;
 };
 
+// rely that STEP==2
 const std::string Indent::Suffix("  "), Indent::VectorSuffix("- ");
 
 std::string spaces(uint8_t howmuch, char c=' ') {
     return std::string(howmuch,' ');
 }
 
-std::ostream& operator<<(std::ostream& os, Indent& indent) {
+std::ostream& operator<<(std::ostream& os, const Indent& indent) {
     indent.print(os);
     return os;
 }

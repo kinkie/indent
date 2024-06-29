@@ -68,8 +68,8 @@ int main()
         << spaces(2) << "- k1: v1\n"
         << spaces(4) << "k2: v2\n";
 
-    Indent i0, i1=i0.indent(), i2=i1.indent();
     o << "**** using Indent()\n";
+    Indent i0, i1 = i0.indent(), i2 = i1.indent();
     o << i0 << "level0.1:\n"
         << i1 << "level1.1:\n";
     subItemMap(o, i2, {{"a", "1"}, {"b", "2"}});

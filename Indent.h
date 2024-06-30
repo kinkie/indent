@@ -22,11 +22,14 @@ class Indent {
         }
 
         void print(std::ostream &os) const {
-            os << spaces << Suffix;
+            os << spaces;
         }
 
-        std::string elem() const {
-            return spaces + VectorSuffix;
+        const std::string elem() const {
+            // uncommon case, let's keep it simple. result could be cached
+            std::string cache(spaces.length() - 2,' ');
+            cache.append("- ");
+            return cache;
         }
 
     private:
@@ -36,13 +39,9 @@ class Indent {
 
         // does not include the last two spaces, due to arrays
         std::string spaces;
-        static const std::string Suffix,
-            VectorSuffix;
 };
 
 // rely that STEP==2
-const std::string Indent::Suffix("  "), Indent::VectorSuffix("- ");
-
 std::string spaces(uint8_t howmuch, char c=' ') {
     return std::string(howmuch,' ');
 }

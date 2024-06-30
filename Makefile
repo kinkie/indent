@@ -3,5 +3,5 @@ all: indent
 
 main.cc: Indent.h
 
-indent: main.cc
-	g++ -std=c++17 -o $@ $^
+indent: main.cc Indent.h
+	g++ -std=c++17 -o $@ $<

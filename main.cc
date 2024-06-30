@@ -63,10 +63,10 @@ int main()
         << spaces(4) << "a: 4\n"
         << spaces(4) << "b: 5\n"
         << "level0.2:\n"
-        << spaces(2) << "- k1: v1\n"
-        << spaces(4) << "k2: v2\n"
-        << spaces(2) << "- k1: v1\n"
-        << spaces(4) << "k2: v2\n";
+        << spaces(0) << "- k1: v1\n"
+        << spaces(2) << "k2: v2\n"
+        << spaces(0) << "- k1: v1\n"
+        << spaces(2) << "k2: v2\n";
 
     o << "**** using Indent()\n";
     Indent i0, i1 = i0.indent(), i2 = i1.indent();
@@ -92,12 +92,17 @@ int main()
     }
     o << i0 << "level0.2:\n";
     {
-        auto i1 = i0.indent();
+        auto i1=i0.indent();
+        subVectorMap(o, i1, {
+            {{"k1", "v1"}, {"k2", "v2"}},
+            {{"k1", "v1"}, {"k2", "v2"}}
+        });
+        // extra bit, to test we can indent in sub scopes
+        o << i1.elem() << "level1.1:\n";
         subVectorMap(o, i1.indent(), {
             {{"k1", "v1"}, {"k2", "v2"}},
             {{"k1", "v1"}, {"k2", "v2"}}
         });
     }
-
     return 0;
 }
